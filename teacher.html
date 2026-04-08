@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFIASEC Teacher Portal</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <div id="bg-slideshow"></div>
+    <div id="portal-clock" class="glass-clock">00:00:00</div>
+
+    <div id="teacher-auth" class="glass-panel">
+        <div class="admin-badge" style="color: #ff4444; font-weight: bold; margin-bottom: 10px; font-size: 0.7rem; letter-spacing: 2px;">STAFF ONLY</div>
+        <h2 style="margin-bottom: 5px;">ADMIN VERIFICATION</h2>
+        <p style="font-size: 0.6rem; color: #888; margin-bottom: 20px;">ACCESSING AFIASEC DATABASE</p>
+        
+        <input type="password" id="t-pass-only" placeholder="ENTER MASTER ACCESS KEY">
+        <button onclick="loginTeacher()">VERIFY & ENTER</button>
+        
+        <p style="font-size: 0.7rem; margin-top: 20px;">
+            <a href="index.html" style="color:var(--glow); text-decoration: none;">← BACK TO MAIN GATEWAY</a>
+        </p>
+    </div>
+
+    <div id="teacher-dashboard" class="glass-panel hidden" style="max-width: 900px; width: 95%;">
+        <div class="admin-header">
+            <div class="stats-bar" style="display: flex; justify-content: space-around; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; font-size: 0.8rem;">
+                <span>TOTAL STUDENTS: <b id="stat-total">0</b></span>
+                <span>ACTIVE ON CAMPUS: <b id="stat-active" style="color:var(--glow)">0</b></span>
+            </div>
+            
+            <h2 style="letter-spacing: 3px; margin: 20px 0;">AFIASEC COMMAND CENTER</h2>
+
+            <div class="broadcast-box" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);">
+                <p style="font-size: 0.6rem; color: var(--glow); margin-bottom: 8px; font-weight: bold;">📢 DISPATCH BROADCAST MESSAGE</p>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <select id="msg-target" style="flex: 1; padding: 8px; background: #222; color: #fff; border: 1px solid #444; border-radius: 5px; font-size: 0.7rem;">
+                        <option value="ALL">WHOLE SCHOOL</option>
+                        <option value="YEAR 1">YEAR 1</option>
+                        <option value="YEAR 2">YEAR 2</option>
+                        <option value="YEAR 3">YEAR 3</option>
+                        <option value="CADET CORPS">CADET CORPS</option>
+                        <option value="ICT CLUB">ICT CLUB</option>
+                        <option value="SPORTS TEAM">SPORTS TEAM</option>
+                    </select>
+                    <input type="text" id="broadcast-msg" placeholder="Type message to students...">
+                    <button onclick="sendBroadcast()" style="padding: 8px 15px; font-size: 0.7rem; width: auto;">SEND</button>
+                </div>
+            </div>
+            
+            <div class="admin-controls" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="student-search" placeholder="🔍 SEARCH BY NAME OR ID NUMBER..." onkeyup="filterStudents()">
+                
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="changeTeacherPass()" class="outline" style="font-size: 0.7rem;">🔑 CHANGE MASTER KEY</button>
+                    <button onclick="renderTeacherList()" class="outline" style="font-size: 0.7rem;">🔄 REFRESH RECORDS</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="student-grid" class="student-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; max-height: 400px; overflow-y: auto; padding: 10px;"></div>
+        
+        <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 10px;">
+            <button class="outline" onclick="wipeAllStudentData()" style="border-color: var(--danger); color: var(--danger); font-size: 0.7rem;">⚠️ FACTORY RESET (WIPE ALL DATA)</button>
+            <button onclick="logout()">TERMINATE SESSION</button>
+        </div>
+    </div>
+
+    <div id="id-view" class="glass-panel hidden" style="max-width: 500px;">
+        <div class="id-card-container" id="printable-id">
+            <div class="id-left">
+                <div class="id-photo"><img id="id-img" src="" alt="Photo"></div>
+                <h3 id="id-name-display" style="font-size: 0.85rem; margin-top: 5px;">NAME</h3>
+                <p id="id-num-display">AA-000000</p>
+                <div id="qrcode"></div>
+            </div>
+            <div class="id-right">
+                <div class="id-row"><span>STATUS</span> <b id="id-status">ACTIVE</b></div>
+                <div class="id-row"><span>HOME</span> <i id="id-home">-</i></div>
+                <div class="id-row"><span>PARENT</span> <i id="id-parent">-</i></div>
+                <div class="id-row"><span>GROUP</span> <i id="id-group">-</i></div>
+                <div class="id-row" style="border: none;"><span>REASON</span> <small id="id-exeat-reason">NONE</small></div>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 20px; width: 100%;">
+            <button onclick="window.print()" style="flex: 1;">PRINT OFFICIAL ID</button>
+            <button class="outline" onclick="closeIDView()" style="flex: 1;">EXIT VIEW</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

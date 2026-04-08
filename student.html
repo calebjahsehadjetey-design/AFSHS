@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFIASEC Student Portal</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <div id="bg-slideshow"></div>
+    <div id="portal-clock" class="glass-clock">00:00:00</div>
+
+    <div id="student-auth" class="glass-panel">
+        <h2 style="letter-spacing: 2px;">STUDENT LOGIN</h2>
+        <p style="font-size: 0.6rem; color: #888; margin-bottom: 20px;">SECURE ACADEMIC GATEWAY</p>
+        
+        <input type="text" id="s-id" placeholder="STUDENT ID (AA-XXXXXX)">
+        <input type="password" id="s-pass" placeholder="ACCESS PIN">
+        <button onclick="loginStudent()">AUTHORIZE ACCESS</button>
+        
+        <p style="font-size: 0.7rem; margin-top: 20px;">
+            NEW STUDENT? <a href="#" onclick="showScreen('student-register')" style="color:var(--glow); text-decoration: none; font-weight: bold;">INITIALIZE HERE</a>
+        </p>
+        <p style="font-size: 0.6rem; margin-top: 10px;">
+            <a href="index.html" style="color:#666; text-decoration: none;">← RETURN TO GATEWAY</a>
+        </p>
+    </div>
+
+    <div id="student-register" class="glass-panel hidden">
+        <h2 style="margin-bottom: 5px;">ACCOUNT INITIALIZATION</h2>
+        <p style="font-size: 0.6rem; color: var(--glow); margin-bottom: 15px;">CREATE YOUR DIGITAL ENROLLMENT</p>
+        
+        <div class="form-scroll">
+            <label style="font-size: 0.6rem; color: var(--glow);">FULL LEGAL NAME:</label>
+            <input type="text" id="reg-name" placeholder="SURNAME FIRSTNAME">
+
+            <label style="font-size: 0.6rem; color: var(--glow);">ACADEMIC YEAR:</label>
+            <select id="reg-year">
+                <option value="1">YEAR 1</option>
+                <option value="2">YEAR 2</option>
+                <option value="3">YEAR 3</option>
+            </select>
+
+            <label style="font-size: 0.6rem; color: var(--glow);">RESIDENTIAL HOME TOWN:</label>
+            <input type="text" id="reg-home" placeholder="CITY / REGION">
+
+            <label style="font-size: 0.6rem; color: var(--glow);">PARENT/GUARDIAN CONTACT:</label>
+            <input type="text" id="reg-parent" placeholder="NAME & PHONE NUMBER">
+
+            <label style="font-size: 0.6rem; color: var(--glow);">EXTRACURRICULAR GROUP:</label>
+            <select id="reg-group">
+                <option value="GENERAL">GENERAL STUDENT</option>
+                <option value="CADET CORPS">CADET CORPS</option>
+                <option value="ICT CLUB">ICT CLUB</option>
+                <option value="SPORTS TEAM">SPORTS TEAM</option>
+                <option value="DEBATE CLUB">DEBATE CLUB</option>
+            </select>
+
+            <label style="font-size: 0.6rem; color: var(--glow);">UPLOAD PASSPORT PHOTO:</label>
+            <input type="file" id="reg-photo" accept="image/*" style="font-size: 0.7rem;">
+
+            <label style="font-size: 0.6rem; color: var(--glow);">CREATE ACCESS PIN:</label>
+            <input type="password" id="reg-pass" placeholder="MIN. 10 CHARACTERS">
+        </div>
+
+        <button onclick="handleRegister()" style="margin-top: 20px;">INITIALIZE ACCOUNT</button>
+        <button class="outline" onclick="showScreen('student-auth')">CANCEL</button>
+    </div>
+
+    <div id="student-dashboard" class="glass-panel hidden" style="max-width: 600px;">
+        <h2 id="greet-user" style="margin-bottom: 5px;">WELCOME</h2>
+        <p style="font-size: 0.6rem; color: var(--glow); margin-bottom: 20px;">STUDENT COMMAND INTERFACE</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button onclick="renderIDCard()">🪪 VIEW DIGITAL ID</button>
+            <button onclick="window.print()" class="outline">🖨️ PRINT RECORDS</button>
+        </div>
+
+        <div id="ai-chat-container">
+            <p style="font-size: 0.6rem; color: var(--glow); font-weight: bold; margin-bottom: 8px;">🤖 AFIASEC AI ASSISTANT</p>
+            <div id="ai-response">How can I assist you today? Ask me about campus rules, schedules, or ICT club activities.</div>
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="ai-input" placeholder="Ask anything..." style="margin: 0; font-size: 0.8rem;">
+                <button onclick="askPortalAI()" style="width: auto; margin: 0; padding: 10px 15px;">SEND</button>
+            </div>
+        </div>
+
+        <button onclick="logout()" class="outline" style="margin-top: 20px; border-color: var(--danger); color: var(--danger);">TERMINATE SESSION</button>
+    </div>
+
+    <div id="id-view" class="glass-panel hidden" style="max-width: 500px;">
+        <div class="id-card-container" id="printable-id">
+            <div class="id-left">
+                <div class="id-photo"><img id="id-img" src="" alt="Photo"></div>
+                <h3 id="id-name-display">NAME</h3>
+                <p id="id-num-display">AA-000000</p>
+                <div id="qrcode"></div>
+            </div>
+            <div class="id-right">
+                <div class="id-row"><span>STATUS</span> <b id="id-status">ACTIVE</b></div>
+                <div class="id-row"><span>HOME TOWN</span> <i id="id-home">-</i></div>
+                <div class="id-row"><span>PARENT</span> <i id="id-parent">-</i></div>
+                <div class="id-row"><span>GROUP</span> <i id="id-group">-</i></div>
+                <div class="id-row" style="border: none;"><span>REASON</span> <small id="id-exeat-reason">NONE</small></div>
+            </div>
+        </div>
+        <button class="outline" onclick="closeIDView()" style="margin-top: 20px;">EXIT VIEW</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

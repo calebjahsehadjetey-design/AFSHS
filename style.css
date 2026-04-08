@@ -1,0 +1,245 @@
+/* --- AFIASEC GLOBAL STYLING --- */
+:root {
+    --glow: #00f2ff;
+    --danger: #ff4444;
+    --glass: rgba(10, 15, 25, 0.85);
+    --ai-bg: rgba(0, 242, 255, 0.05);
+    --card-bg: #0a1018;
+}
+
+body {
+    margin: 0; 
+    background: #050a10; 
+    color: white;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* --- BACKGROUND --- */
+#bg-slideshow {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1; background: #000;
+    transition: background-image 1.5s ease-in-out;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.4);
+}
+
+#bg-slideshow::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6); 
+}
+
+/* --- CLOCK --- */
+.glass-clock {
+    position: fixed; top: 20px; right: 20px;
+    min-width: 120px; text-align: center;
+    padding: 10px 20px; background: var(--glass);
+    backdrop-filter: blur(15px); border-radius: 12px;
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    color: var(--glow); font-family: 'Courier New', monospace; font-size: 1.4rem;
+    z-index: 100;
+}
+
+/* --- UI PANELS --- */
+.glass-panel {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px; padding: 30px;
+    width: 90%; max-width: 450px; text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease;
+}
+
+.hidden { display: none !important; }
+
+/* --- FORM SCROLLING --- */
+.form-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px;
+    margin-top: 10px;
+}
+
+.form-scroll::-webkit-scrollbar { width: 4px; }
+.form-scroll::-webkit-scrollbar-thumb { 
+    background: var(--glow); 
+    border-radius: 10px; 
+}
+
+/* --- FORMS & BUTTONS --- */
+label { display: block; margin-top: 10px; font-weight: bold; }
+
+input, select {
+    width: 100%; padding: 12px; margin: 8px 0;
+    background: rgba(0,0,0,0.5); border: 1px solid #333;
+    color: white; border-radius: 8px; text-transform: uppercase;
+    box-sizing: border-box; outline: none;
+}
+
+input:focus, select:focus { border-color: var(--glow); }
+
+button {
+    width: 100%; padding: 14px; margin: 10px 0;
+    background: var(--glow); color: black; border: none;
+    border-radius: 8px; font-weight: bold; cursor: pointer; 
+    text-transform: uppercase; transition: 0.3s;
+}
+
+button:hover { filter: brightness(1.2); box-shadow: 0 0 15px var(--glow); }
+button.outline { background: transparent; border: 1px solid var(--glow); color: var(--glow); }
+
+/* --- RE-ENGINEERED ID CARD SYSTEM --- */
+.id-card-container {
+    display: flex; 
+    background-color: #0a1018 !important;
+    border-radius: 10px; 
+    padding: 15px; 
+    border: 2px solid var(--glow); 
+    gap: 15px; 
+    margin: 10px auto;
+    width: 420px;
+    height: 240px; 
+    box-shadow: 0 0 25px rgba(0, 242, 255, 0.2);
+    position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+.id-left { 
+    flex: 1.2; 
+    text-align: center; 
+    border-right: 1px solid rgba(0, 242, 255, 0.3); 
+    padding-right: 12px;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+}
+
+.id-photo { 
+    width: 130px; 
+    height: 140px; 
+    background: #000; 
+    border: 1.5px solid var(--glow); 
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+.id-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+#id-name-display { font-size: 0.9rem; font-weight: bold; color: #fff; margin: 2px 0; text-transform: uppercase; }
+#id-num-display { font-size: 0.7rem; color: var(--glow); font-family: monospace; letter-spacing: 1px; }
+
+.id-right { 
+    flex: 1.8; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 3px; 
+    justify-content: flex-start; 
+    position: relative;
+}
+
+.id-row { font-size: 0.65rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 2px; text-align: left; }
+.id-row span { color: var(--glow); font-weight: bold; font-size: 0.5rem; text-transform: uppercase; display: block; }
+.id-row i, .id-row b { color: #fff; font-style: normal; display: block; font-size: 0.7rem; }
+
+#qrcode { 
+    background: white; 
+    padding: 3px; 
+    border-radius: 4px; 
+    width: 70px; 
+    height: 70px; 
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* --- AI ASSISTANT --- */
+#ai-chat-container {
+    margin-top: 20px; background: var(--ai-bg);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    padding: 15px; border-radius: 15px; text-align: left;
+}
+
+#ai-response {
+    font-size: 0.75rem; line-height: 1.4; color: #bbb;
+    margin-bottom: 12px; max-height: 80px; overflow-y: auto;
+}
+
+/* --- PRINT ENGINE (STABLE & SECURE) --- */
+@media print {
+    @page { 
+        size: landscape; 
+        margin: 0; 
+    }
+    
+    body { 
+        background: white !important; 
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* 1. HIDE ALL UI ELEMENTS INCLUDING THE SIGNUP FORM */
+    #bg-slideshow, 
+    .glass-clock, 
+    #portal-clock, 
+    button, 
+    #ai-chat-container, 
+    .form-scroll,
+    #student-register,  /* This specifically stops the signup form from printing */
+    #student-auth,      /* This stops the login form from printing */
+    .glass-panel > h2, 
+    .glass-panel > p { 
+        display: none !important; 
+    }
+    
+    /* 2. PREPARE THE PRINT CONTAINER */
+    .glass-panel { 
+        background: none !important; 
+        border: none !important; 
+        padding: 0 !important; 
+        display: block !important;
+        visibility: visible !important;
+    }
+
+    /* 3. SHOW ONLY THE ID VIEW */
+    #id-view {
+        display: block !important;
+        visibility: visible !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+    }
+
+    .id-card-container {
+        position: absolute; 
+        top: 0; 
+        left: 0;
+        margin: 0.2in; 
+        width: 3.375in !important; 
+        height: 2.125in !important;
+        background-color: #0a1018 !important; 
+        color: white !important;
+        border: 2px solid #00f2ff !important;
+        visibility: visible !important;
+        display: flex !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        box-shadow: none !important; /* Shadows can look messy on paper */
+    }
+    
+    /* 4. FORCE CONTRAST FOR INK */
+    #id-name-display, .id-row b, .id-row i { color: white !important; }
+    .id-row span, #id-num-display { color: #00f2ff !important; }
+}

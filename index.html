@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFIASEC - Secure Digital Gateway</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        .gateway-container {
+            animation: fadeIn 1.2s ease-out;
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .logo-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px var(--glow));
+            display: inline-block;
+            user-select: none;
+        }
+
+        .portal-btn {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-weight: bold;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+            background: var(--glow);
+            color: black;
+            text-transform: uppercase;
+        }
+
+        .portal-btn.outline {
+            background: transparent;
+            border: 1px solid var(--glow);
+            color: var(--glow);
+        }
+
+        .portal-btn:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 20px var(--glow);
+            transform: translateY(-2px);
+        }
+
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            background-color: var(--glow);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            box-shadow: 0 0 8px var(--glow);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="bg-slideshow"></div>
+    <div id="portal-clock" class="glass-clock">00:00:00</div>
+
+    <div class="glass-panel gateway-container">
+        <div class="logo-icon">🛡️</div>
+        <h1 style="letter-spacing: 3px; color: #fff; margin-bottom: 5px; font-size: 1.5rem;">AFIASEC ACADEMY</h1>
+        <p style="font-size: 0.7rem; margin-bottom: 30px; font-weight: bold; text-transform: uppercase;">
+            <span id="sync-dot" class="status-dot"></span> 
+            <span id="sync-status" style="color: var(--glow);">Establishing Link...</span>
+        </p>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="portal-btn" onclick="window.location.href='student.html'">
+                STUDENT ACCESS
+            </button>
+            
+            <button class="portal-btn outline" onclick="window.location.href='teacher.html'">
+                ADMINISTRATION
+            </button>
+        </div>
+
+        <div style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+            <p style="font-size: 0.55rem; color: #777; line-height: 1.6; text-transform: uppercase; letter-spacing: 1px;">
+                Secure Gateway v2.0<br>
+                <span style="color: rgba(255,255,255,0.3);">Authorized Personnel Only</span>
+            </p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    
+    <script>
+        // Verification logic depends on script.js being loaded
+        setTimeout(() => {
+            const statusText = document.getElementById('sync-status');
+            const statusDot = document.getElementById('sync-dot');
+            
+            // Checks if 'db' was successfully created in script.js
+            if (typeof db !== 'undefined') {
+                statusText.innerText = "Digital Portal Online";
+                statusText.style.color = "var(--glow)";
+                statusDot.style.backgroundColor = "var(--glow)";
+            } else {
+                statusText.innerText = "System Offline - Database Error";
+                statusText.style.color = "var(--danger)";
+                statusDot.style.backgroundColor = "var(--danger)";
+                statusDot.style.boxShadow = "0 0 8px var(--danger)";
+            }
+        }, 1500);
+    </script>
+</body>
+</html>
